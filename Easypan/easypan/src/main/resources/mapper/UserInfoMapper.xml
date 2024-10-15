@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easypan.mapper.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.easypan.pojo.UserInfo">
+        <id property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="joinTime" column="join_time" jdbcType="TIMESTAMP"/>
+        <result property="lastLoginTime" column="last_login_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="useSpace" column="use_space" jdbcType="BIGINT"/>
+        <result property="totalSpace" column="total_space" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id
+        ,nick_name,email,
+        password,join_time,last_login_time,
+        status,use_space,total_space
+    </sql>
+    <update id="updateUserSpace">
+        update user_info
+        <set>
+            <if test="useSpace!=null">
+                use_space=use_space+#{useSpace},
+            </if>
+            <if test="totalSpace!=null">
+                total_space=total_space+#{totalSpace},
+            </if>
+        </set>
+        where user_id=#{userId}
+        <if test="useSpace!=null">
+            and <![CDATA[(use_space+#{useSpace})<=total_space]]>
+        </if>
+        <if test="totalSpace!=null">
+            and <![CDATA[(total_space+#{totalSpace})>=use_space]]>
+        </if>
+    </update>
+</mapper>

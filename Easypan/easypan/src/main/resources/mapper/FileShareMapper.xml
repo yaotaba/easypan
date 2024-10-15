@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easypan.mapper.FileShareMapper">
+
+    <resultMap id="BaseResultMap" type="com.easypan.pojo.FileShare">
+            <id property="shareId" column="share_id" jdbcType="VARCHAR"/>
+            <result property="fileId" column="file_id" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+            <result property="validType" column="valid_type" jdbcType="TINYINT"/>
+            <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+            <result property="shareTime" column="share_time" jdbcType="TIMESTAMP"/>
+            <result property="code" column="code" jdbcType="VARCHAR"/>
+            <result property="showCount" column="show_count" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        share_id,file_id,user_id,
+        valid_type,expire_time,share_time,
+        code,show_count
+    </sql>
+
+    <resultMap id="selectFileSharePageResultMap" type="com.easypan.pojo.FileShare">
+        <id property="shareId" column="share_id" jdbcType="VARCHAR"/>
+        <result property="fileId" column="file_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="validType" column="valid_type" jdbcType="TINYINT"/>
+        <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+        <result property="shareTime" column="share_time" jdbcType="TIMESTAMP"/>
+        <result property="code" column="code" jdbcType="VARCHAR"/>
+        <result property="showCount" column="show_count" jdbcType="INTEGER"/>
+        <association property="fileInfo" javaType="fileInfo">
+            <id column="file_id" property="fileId"/>
+            <id column="user_id" property="userId"/>
+            <result property="fileMd5" column="file_md5" jdbcType="VARCHAR"/>
+            <result property="filePid" column="file_pid" jdbcType="VARCHAR"/>
+            <result property="fileSize" column="file_size" jdbcType="BIGINT"/>
+            <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+            <result property="fileCover" column="file_cover" jdbcType="VARCHAR"/>
+            <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+            <result property="folderType" column="folder_type" jdbcType="TINYINT"/>
+            <result property="fileCategory" column="file_category" jdbcType="TINYINT"/>
+            <result property="fileType" column="file_type" jdbcType="TINYINT"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="recoveryTime" column="recovery_time" jdbcType="TIMESTAMP"/>
+            <result property="delFlag" column="del_flag" jdbcType="TINYINT"/>
+        </association>
+    </resultMap>
+    <select id="selectFileSharePage" resultMap="selectFileSharePageResultMap">
+        SELECT share_id,s.file_id,s.user_id,valid_type,expire_time,share_time,code,show_count,file_name,
+               folder_type, file_category,file_type,file_cover
+        FROM file_share s left join file_info f on s.file_id=f.file_id and s.user_id=f.user_id
+        WHERE s.user_id=#{fileShare.userId}
+        order by share_time desc
+
+    </select>
+</mapper>
